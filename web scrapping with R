@@ -1,0 +1,121 @@
+install.packages('rvest')
+
+library(rvest)
+
+library(stringr)
+
+url="https://business.okstate.edu/directory/index.html?d=Department%20of%20Management%20Science%20%26%20Information%20Systems"
+
+msis= read_html(url)
+
+#Names
+
+find_code1 = html_nodes(msis, xpath="/html/body/div[6]/div[1]/div[3]/div/div/div[2]/div/div[1]/h4/a[1]")
+
+value1 = html_text(find_code1)
+
+#Title
+
+find_code2 = html_nodes(msis, xpath="/html/body/div[6]/div[1]/div[3]/div/div/div[2]/div/div[2]/div/p[1]/span[2]")
+
+value2 = html_text(find_code2)
+
+#Address
+
+find_code3 = html_nodes(msis, xpath="/html/body/div[6]/div[1]/div[3]/div/div/div[2]/div/div[2]/div/address")
+
+value3 = html_text(find_code3)
+
+#find_code7 = html_nodes(msis, xpath="/html/body/div[6]/div[1]/div[3]/div/div/div[2]/div[2]/div[2]/div/address/br/text()")
+#value7 = html_text(find_code7)
+#tml/body/div[6]/div[1]/div[3]/div/div/div[2]/div[2]/div[2]/div/address/br[1]
+
+#Phone
+
+find_code4 = html_nodes(msis, xpath="/html/body/div[6]/div[1]/div[3]/div/div/div[2]/div/div[2]/div/address/a[1]")
+
+value4 = html_text(find_code4)
+
+#Email
+
+find_code5 = html_nodes(msis, xpath="/html/body/div[6]/div[1]/div[3]/div/div/div[2]/div/div[2]/div/address/a[2]")
+
+value5 = html_text(find_code5)
+
+#Individual dataframe
+
+direc1= as.data.frame(value1)
+
+direc2= as.data.frame(value2)
+
+direc3= as.data.frame(value3)
+
+direc4= as.data.frame(value4)
+
+direc5= as.data.frame(value5)
+
+#Dataframe-all together
+
+merged <-cbind(direc1, direc2, direc3, direc4, direc5)
+
+library(tidyverse)
+
+
+
+##### CSS selectors
+
+website <- "https://business.okstate.edu/directory/index.html?d=Department%20of%20Management%20Science%20%26%20Information%20Systems" %>% 
+  read_html()
+
+website %>% 
+  html_nodes(css = "#profile-listing-accordion")
+
+
+website %>% 
+  html_nodes(css = "h4.panel-title")
+
+website %>% 
+  html_nodes(css = "span.profile-title")
+
+website %>% 
+  html_nodes(css = "div[class^=panel-body] > address")
+
+website %>% 
+  html_nodes(css = "div[class^=panel-body] > address > *")
+
+
+
+###Xpath selectors
+
+library(XML)
+
+url <- "https://business.okstate.edu/directory/index.html?d=Department%20of%20Management%20Science%20%26%20Information%20Systems"
+
+source <- readLines(url, encoding = "UTF-8")
+
+parsed_doc <- htmlParse(source, encoding = "UTF-8")
+
+xpathSApply(parsed_doc, path = '/html/body/div[6]/div[1]/div[3]/div/div/div[2]/div/div[1]/h4/a[1]', xmlValue)
+
+xpathSApply(parsed_doc, path = '/html/body/div[6]/div[1]/div[3]/div/div/div[2]/div/div[2]/div/p[1]/span[2]', xmlValue)
+
+xpathSApply(parsed_doc, path = '/html/body/div[6]/div[1]/div[3]/div/div/div[2]/div/div[2]/div/address', xmlValue)
+
+xpathSApply(parsed_doc, path = '/html/body/div[6]/div[1]/div[3]/div/div/div[2]/div/div[2]/div/address/a[1]', xmlValue)
+
+xpathSApply(parsed_doc, path = '/html/body/div[6]/div[1]/div[3]/div/div/div[2]/div/div[2]/div/address/a[2]', xmlValue)
+
+
+
+### Sepearting first and last name
+library(tidyr)
+
+df1= extract(merged,value1,c("First_Name","Last_Name"), "([^ ]+) (.*)")
+
+df1
+
+df1 <- cbind(df1,value1)
+
+colnames(df1) <- c('First Name', 'Last Name', 'Title', 'Office Address', 'Phone', 'Email', 'Name')
+
+df1
