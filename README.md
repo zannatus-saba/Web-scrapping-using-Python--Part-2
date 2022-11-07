@@ -1,4 +1,4 @@
-# Web-scrapping-using-Python--Part-2
+# Web-scrapping-using-R-
 
 I will scrape directory information from the Management Science and Information Systems department at OSU (https://business.okstate.edu/directory/index.html?d=Department%20of%20Management%20Science%20%26%20Information%20Systems). I will scrape the following data for faculty and lecturers and convert it into a data frame:
 
